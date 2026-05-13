@@ -1,501 +1,439 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merwin Luistro | Web Developer & SQA</title>
-  <meta name="description" content="Merwin Luistro – Freelance Web Developer, IT Staff & Software Quality Assurance specialist. Building user-friendly, visually stunning websites." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merwin Lustro — Full Stack Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ===== NAV ===== -->
-  <nav id="navbar">
-    <div class="nav-inner">
-      <a href="#hero" class="nav-logo">mer<span>dev</span></a>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#expertise">Expertise</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="#contact" class="nav-cta">Let's Connect</a></li>
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-ring"></div>
+      <span class="loader-text">merdev</span>
+    </div>
+  </div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- Particle Canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Navigation -->
+  <nav class="nav" id="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-text">merdev</span>
+        <span class="logo-dot"></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#experience" class="nav-link">Experience</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#expertise" class="nav-link">Skills</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
+      <a href="#contact" class="btn btn-primary nav-cta magnetic">Let's Talk</a>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
 
-  <!-- ===== HERO ===== -->
-  <section id="hero">
-    <div class="hero-bg">
-      <div class="hero-blob blob-1"></div>
-      <div class="hero-blob blob-2"></div>
-      <div class="hero-grid"></div>
-    </div>
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        Available for Freelance Work
-      </div>
-      <h1 class="hero-name">Merwin <span class="gradient-text">Luistro</span></h1>
-      <p class="hero-role">Web Developer &amp; Software QA</p>
-      <p class="hero-tagline">
-        Crafting user-friendly, visually compelling digital experiences — from full-stack web apps to machine learning integrations.
-      </p>
-      <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary">View My Work</a>
-        <a href="#contact" class="btn btn-outline">Get In Touch</a>
-        <a href="MERWIN_RESUME_2026.pdf" download="Merwin_Luistro_Resume_2026.pdf" class="btn btn-download" id="btn-download-resume">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Download CV
-        </a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-num">6+</span>
-          <span class="stat-label">Projects Delivered</span>
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <div class="badge reveal-up">
+          <span class="badge-dot"></span>
+          Available for Freelance Work
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">3+</span>
-          <span class="stat-label">Years Experience</span>
+        <h1 class="hero-title reveal-up">
+          Hi, I'm <span class="gradient-text">Merwin</span><br>
+          <span class="typewriter" id="typewriter"></span>
+        </h1>
+        <p class="hero-desc reveal-up">
+          Full Stack Developer &amp; ML Engineer based in the Philippines, crafting digital experiences that blend stunning design with powerful functionality.
+        </p>
+        <div class="hero-cta reveal-up">
+          <a href="#projects" class="btn btn-primary magnetic">View My Work</a>
+          <a href="#contact" class="btn btn-outline magnetic">Get In Touch</a>
+          <a href="MERWIN_RESUME_2026.pdf" download class="btn btn-ghost magnetic">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CV
+          </a>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">100%</span>
-          <span class="stat-label">Client Satisfaction</span>
+        <div class="hero-stats reveal-up">
+          <div class="stat">
+            <div class="stat-row"><span class="stat-num" data-count="6">0</span><span class="stat-plus">+</span></div>
+            <span class="stat-label">Projects</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <div class="stat-row"><span class="stat-num" data-count="3">0</span><span class="stat-plus">+</span></div>
+            <span class="stat-label">Years Exp.</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <div class="stat-row"><span class="stat-num" data-count="100">0</span><span class="stat-plus">%</span></div>
+            <span class="stat-label">Satisfaction</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="hero-visual">
-      <div class="avatar-ring">
-        <div class="avatar-inner">
-          <svg viewBox="0 0 120 120" class="avatar-svg" aria-hidden="true">
-            <circle cx="60" cy="45" r="28" fill="#a5b4fc" opacity="0.9"/>
-            <ellipse cx="60" cy="95" rx="42" ry="28" fill="#818cf8" opacity="0.8"/>
-            <circle cx="60" cy="45" r="22" fill="#e0e7ff"/>
-            <circle cx="52" cy="41" r="4" fill="#3730a3"/>
-            <circle cx="68" cy="41" r="4" fill="#3730a3"/>
-            <path d="M52 53 Q60 60 68 53" stroke="#3730a3" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
-      </div>
-      <div class="float-card card-1">
-        <span class="card-icon">🌐</span>
-        <div>
-          <div class="card-title">Web Dev</div>
-          <div class="card-sub">WordPress &amp; Modern Stack</div>
-        </div>
-      </div>
-      <div class="float-card card-2">
-        <span class="card-icon">🤖</span>
-        <div>
-          <div class="card-title">Machine Learning</div>
-          <div class="card-sub">AI Integration</div>
-        </div>
-      </div>
-      <div class="float-card card-3">
-        <span class="card-icon">🔍</span>
-        <div>
-          <div class="card-title">SQA</div>
-          <div class="card-sub">Quality Assurance</div>
+
+      <div class="hero-visual reveal-right">
+        <div class="constellation-wrapper">
+          <canvas id="constellationCanvas"></canvas>
         </div>
       </div>
     </div>
-    <div class="scroll-hint">
-      <span>Scroll to explore</span>
-      <div class="scroll-arrow"></div>
+    <div class="hero-scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
     </div>
   </section>
 
-  <!-- ===== ABOUT / SERVICES ===== -->
-  <section id="about">
+  <!-- Services -->
+  <section class="section" id="about">
     <div class="container">
-      <div class="section-tag">What I Do</div>
-      <h2 class="section-title">Building Digital Solutions<br /><span class="gradient-text">That Actually Work</span></h2>
-
+      <div class="section-header reveal-up">
+        <span class="section-tag">What I Do</span>
+        <h2 class="section-title">Services I Offer</h2>
+        <p class="section-desc">I bring ideas to life with modern technology and clean code</p>
+      </div>
       <div class="services-grid">
-        <div class="service-card featured" data-index="0">
-          <div class="service-badge">Most Requested</div>
-          <div class="service-icon-wrap">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="8" width="40" height="28" rx="4" fill="#4f46e5" opacity="0.15"/>
-              <path d="M14 24l6-6 6 6 8-8" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <rect x="12" y="38" width="24" height="3" rx="1.5" fill="#6366f1" opacity="0.5"/>
-            </svg>
+        <div class="service-card featured tilt-card reveal-up">
+          <div class="service-icon">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </div>
+          <div class="service-badge">Most Requested</div>
           <h3>Website &amp; Software Development</h3>
-          <p>With experience in website development, I create user-friendly and visually appealing websites, offering complete building and maintenance services using WordPress and modern web development tools.</p>
-          <ul class="service-tags">
-            <li>WordPress</li><li>HTML / CSS / JS</li><li>PHP</li><li>MySQL</li>
-          </ul>
+          <p>End-to-end web applications with modern frameworks and clean, maintainable code. From landing pages to complex platforms.</p>
+          <div class="service-tags">
+            <span>React</span><span>Node.js</span><span>WordPress</span><span>Supabase</span>
+          </div>
         </div>
-
-        <div class="service-card" data-index="1">
-          <div class="service-icon-wrap">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="24" cy="24" r="18" fill="#7c3aed" opacity="0.15"/>
-              <path d="M16 32c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="24" cy="20" r="5" stroke="#8b5cf6" stroke-width="2.5"/>
-              <path d="M10 18l4 4m24-4l-4 4" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-            </svg>
+        <div class="service-card tilt-card reveal-up" style="--delay:0.1s">
+          <div class="service-icon">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
           </div>
           <h3>Machine Learning Integration</h3>
-          <p>Leveraging AI and machine learning to power intelligent applications — from data processing pipelines to predictive models embedded in real-world software systems.</p>
-          <ul class="service-tags">
-            <li>Python</li><li>TensorFlow</li><li>Data Analysis</li><li>AI Models</li>
-          </ul>
+          <p>Integrating AI and ML capabilities into your products — intelligent automation, data analysis, and predictive features.</p>
+          <div class="service-tags">
+            <span>Python</span><span>TensorFlow</span><span>scikit-learn</span><span>APIs</span>
+          </div>
         </div>
-
-        <div class="service-card" data-index="2">
-          <div class="service-icon-wrap">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 36l10-10 8 8 14-18" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="38" cy="12" r="6" fill="#06b6d4" opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
-              <path d="M36 12l1.5 1.5L40 10" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+        <div class="service-card tilt-card reveal-up" style="--delay:0.2s">
+          <div class="service-icon">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z"/></svg>
           </div>
           <h3>Software Quality Assurance</h3>
-          <p>Ensuring software quality through thorough testing protocols, bug tracking, and process optimization. My SQA experience guarantees that every product meets the highest standards before release.</p>
-          <ul class="service-tags">
-            <li>Test Planning</li><li>Bug Tracking</li><li>QA Process</li><li>Documentation</li>
-          </ul>
+          <p>Comprehensive testing strategies to ensure your software works flawlessly. Bug detection, performance, and reliability.</p>
+          <div class="service-tags">
+            <span>Manual Testing</span><span>Automation</span><span>Selenium</span><span>JIRA</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== WORK EXPERIENCE ===== -->
-  <section id="experience">
+  <!-- Experience -->
+  <section class="section" id="experience">
     <div class="container">
-      <div class="section-tag">My Journey</div>
-      <h2 class="section-title">Work <span class="gradient-text">Experience</span></h2>
+      <div class="section-header reveal-up">
+        <span class="section-tag">Career</span>
+        <h2 class="section-title">Work Experience</h2>
+        <p class="section-desc">Building expertise across different industries and technologies</p>
+      </div>
       <div class="timeline">
-        <div class="timeline-item">
+        <div class="timeline-item reveal-left">
           <div class="timeline-dot active"></div>
-          <div class="timeline-content">
-            <span class="timeline-period">March 2025 – April 2026</span>
+          <div class="timeline-card tilt-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">Mar 2025 — Apr 2026</span>
+              <span class="timeline-badge">Full-time</span>
+            </div>
             <h3>Information System Analyst II</h3>
-            <p class="timeline-company">Department of Labor and Employment</p>
-            <p>Analyzing and managing information systems to support government operations, ensuring data integrity, system performance, and alignment with organizational goals.</p>
+            <p class="timeline-company">Department of Labor and Employment (DOLE)</p>
+            <p>Analyzed and improved information systems for government operations, ensuring data integrity and system efficiency across departments.</p>
+            <div class="timeline-tags"><span>System Analysis</span><span>Data Management</span><span>Government IT</span></div>
           </div>
         </div>
-        <div class="timeline-item">
+        <div class="timeline-item reveal-right">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <span class="timeline-period">February 2024 – March 2025</span>
+          <div class="timeline-card tilt-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">Feb 2024 — Mar 2025</span>
+              <span class="timeline-badge">Full-time</span>
+            </div>
             <h3>Web Developer / IT Staff</h3>
-            <p class="timeline-company">Occupational Safety and Health Center</p>
-            <p>Developed and maintained web platforms for OSHC, including e-learning systems and internal document management tools, while providing IT infrastructure support.</p>
+            <p class="timeline-company">Occupational Safety &amp; Health Center (OSHC)</p>
+            <p>Developed and maintained web applications for occupational safety. Built an e-learning platform and document management system used organization-wide.</p>
+            <div class="timeline-tags"><span>React</span><span>WordPress</span><span>PHP</span><span>MySQL</span></div>
           </div>
         </div>
-        <div class="timeline-item">
+        <div class="timeline-item reveal-left">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <span class="timeline-period">October 2023 – Present</span>
-            <h3>Web Developer</h3>
-            <p class="timeline-company">Freelancing – Self Employed</p>
-            <p>Building and maintaining websites for clients using WordPress, modern web technologies, and custom solutions tailored to each client's unique business needs.</p>
+          <div class="timeline-card tilt-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">Oct 2023 — Present</span>
+              <span class="timeline-badge current">Active</span>
+            </div>
+            <h3>Freelance Web Developer</h3>
+            <p class="timeline-company">Self-Employed</p>
+            <p>Delivering custom web solutions for clients across e-commerce, hospitality, and HR sectors. End-to-end project management and client relations.</p>
+            <div class="timeline-tags"><span>Full Stack</span><span>Client Relations</span><span>E-Commerce</span></div>
           </div>
         </div>
-        <div class="timeline-item">
+        <div class="timeline-item reveal-right">
           <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <span class="timeline-period">May – August 2022</span>
-            <h3>Software Quality Assurance</h3>
-            <p class="timeline-company">On the Job Training</p>
-            <p>Hands-on internship experience in SQA — conducting test cases, reporting bugs, and ensuring software products met quality benchmarks before deployment.</p>
+          <div class="timeline-card tilt-card">
+            <div class="timeline-meta">
+              <span class="timeline-date">May 2022 — Aug 2022</span>
+              <span class="timeline-badge">Internship</span>
+            </div>
+            <h3>SQA Engineer Intern</h3>
+            <p class="timeline-company">Software Quality Assurance Team</p>
+            <p>Performed manual and automated testing, wrote test cases, reported bugs, and collaborated with the development team on quality assurance processes.</p>
+            <div class="timeline-tags"><span>Manual Testing</span><span>Test Cases</span><span>Bug Tracking</span></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== PROJECTS ===== -->
-  <section id="projects">
+  <!-- Projects -->
+  <section class="section" id="projects">
     <div class="container">
-      <div class="section-tag">Portfolio</div>
-      <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
-      <p class="section-sub">A selection of projects that showcase my skills across web development, systems design, and software engineering.</p>
-
+      <div class="section-header reveal-up">
+        <span class="section-tag">Portfolio</span>
+        <h2 class="section-title">Featured Projects</h2>
+        <p class="section-desc">A selection of work I'm most proud of</p>
+      </div>
       <div class="projects-grid">
-
-        <div class="project-card" id="proj-oshc-learning">
-          <div class="project-img" style="background: linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);">
-            <div class="project-img-icon">🎓</div>
-          </div>
-          <div class="project-body">
-            <div class="project-tags"><span>E-Learning</span><span>WordPress</span></div>
-            <h3>OSHC Learning Academy</h3>
-            <p>An e-training platform designed for safety officers — enabling online courses, certifications, and compliance tracking for occupational safety professionals.</p>
-            <div class="project-footer">
-              <span class="project-type">Web Platform</span>
-            </div>
-          </div>
+        <div class="project-card tilt-card reveal-up">
+          <div class="project-icon">🎓</div>
+          <div class="project-meta"><span class="project-category">E-Learning</span><span class="project-year">2024</span></div>
+          <h3>OSHC Learning Academy</h3>
+          <p>A comprehensive e-learning platform for occupational safety training with course management, progress tracking, and certifications.</p>
+          <div class="project-tags"><span>WordPress</span><span>LMS</span><span>PHP</span><span>MySQL</span></div>
+          <div class="project-arrow">→</div>
         </div>
-
-        <div class="project-card" id="proj-oshc-records">
-          <div class="project-img" style="background: linear-gradient(135deg,#0ea5e9 0%,#06b6d4 100%);">
-            <div class="project-img-icon">📂</div>
-          </div>
-          <div class="project-body">
-            <div class="project-tags"><span>DMS</span><span>In-House</span></div>
-            <h3>OSHC Records</h3>
-            <p>An internal document management system built for OSHC — streamlining record-keeping, file organization, and document retrieval for staff efficiency.</p>
-            <div class="project-footer">
-              <span class="project-type">Web App</span>
-            </div>
-          </div>
+        <div class="project-card tilt-card reveal-up" style="--delay:0.1s">
+          <div class="project-icon">📁</div>
+          <div class="project-meta"><span class="project-category">Document Management</span><span class="project-year">2024</span></div>
+          <h3>OSHC Records System</h3>
+          <p>A centralized document management system for storing, organizing, and retrieving official records with role-based access control.</p>
+          <div class="project-tags"><span>React</span><span>Node.js</span><span>Supabase</span></div>
+          <div class="project-arrow">→</div>
         </div>
-
-        <div class="project-card" id="proj-patikar">
-          <div class="project-img" style="background: linear-gradient(135deg,#f59e0b 0%,#ef4444 100%);">
-            <div class="project-img-icon">🛍️</div>
-          </div>
-          <div class="project-body">
-            <div class="project-tags"><span>E-Commerce</span><span>WordPress</span></div>
-            <h3>Patikar Inc.</h3>
-            <p>A fully-featured e-commerce website for Patikar Inc., offering a clean shopping experience with product listings, cart, and checkout for various consumer products.</p>
-            <div class="project-footer">
-              <span class="project-type">E-Commerce</span>
-            </div>
-          </div>
+        <div class="project-card tilt-card reveal-up" style="--delay:0.2s">
+          <div class="project-icon">🛍️</div>
+          <div class="project-meta"><span class="project-category">E-Commerce</span><span class="project-year">2023</span></div>
+          <h3>Patikar Inc.</h3>
+          <p>Full-featured e-commerce platform with product catalog, cart, payment integration, and admin dashboard for inventory management.</p>
+          <div class="project-tags"><span>WordPress</span><span>WooCommerce</span><span>PHP</span></div>
+          <div class="project-arrow">→</div>
         </div>
-
-        <div class="project-card" id="proj-searchndrive">
-          <div class="project-img" style="background: linear-gradient(135deg,#10b981 0%,#059669 100%);">
-            <div class="project-img-icon">🚗</div>
-          </div>
-          <div class="project-body">
-            <div class="project-tags"><span>Search Platform</span><span>Web App</span></div>
-            <h3>Search n Drive</h3>
-            <p>A car browsing website where users can search vehicles by filters, save their favorites, and compare options — making car discovery simple and intuitive.</p>
-            <div class="project-footer">
-              <span class="project-type">Web App</span>
-            </div>
-          </div>
+        <div class="project-card tilt-card reveal-up">
+          <div class="project-icon">🚗</div>
+          <div class="project-meta"><span class="project-category">Automotive</span><span class="project-year">2023</span></div>
+          <h3>Search n Drive</h3>
+          <p>Car browsing platform allowing users to filter, compare, and inquire about vehicles with an intuitive search interface.</p>
+          <div class="project-tags"><span>React</span><span>Supabase</span><span>Tailwind</span></div>
+          <div class="project-arrow">→</div>
         </div>
-
-        <div class="project-card" id="proj-hotel">
-          <div class="project-img" style="background: linear-gradient(135deg,#8b5cf6 0%,#ec4899 100%);">
-            <div class="project-img-icon">🏨</div>
-          </div>
-          <div class="project-body">
-            <div class="project-tags"><span>Management System</span><span>Software</span></div>
-            <h3>Hotel Ni Mang Kanor</h3>
-            <p>A hotel management software solution covering reservations, room tracking, guest records, and billing — built to simplify day-to-day hotel operations.</p>
-            <div class="project-footer">
-              <span class="project-type">Desktop Software</span>
-            </div>
-          </div>
+        <div class="project-card tilt-card reveal-up" style="--delay:0.1s">
+          <div class="project-icon">🏨</div>
+          <div class="project-meta"><span class="project-category">Hospitality</span><span class="project-year">2023</span></div>
+          <h3>Hotel Ni Mang Kanor</h3>
+          <p>Hotel management software with room booking, guest tracking, billing, and reporting — streamlining daily hotel operations.</p>
+          <div class="project-tags"><span>PHP</span><span>MySQL</span><span>Bootstrap</span></div>
+          <div class="project-arrow">→</div>
         </div>
-
-        <div class="project-card" id="proj-trackus">
-          <div class="project-img" style="background: linear-gradient(135deg,#f97316 0%,#eab308 100%);">
-            <div class="project-img-icon">👥</div>
-          </div>
-          <div class="project-body">
-            <div class="project-tags"><span>HR System</span><span>Web App</span></div>
-            <h3>TrackUs</h3>
-            <p>An employee management system for tracking attendance, performance, tasks, and payroll — helping businesses efficiently manage their workforce in one place.</p>
-            <div class="project-footer">
-              <span class="project-type">Web App</span>
-            </div>
-          </div>
+        <div class="project-card tilt-card reveal-up" style="--delay:0.2s">
+          <div class="project-icon">👥</div>
+          <div class="project-meta"><span class="project-category">HR System</span><span class="project-year">2022</span></div>
+          <h3>TrackUs</h3>
+          <p>Human resource management system with attendance tracking, payroll processing, employee records, and performance monitoring.</p>
+          <div class="project-tags"><span>React</span><span>Node.js</span><span>PostgreSQL</span></div>
+          <div class="project-arrow">→</div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ===== EXPERTISE ===== -->
-  <section id="expertise">
+  <!-- Expertise -->
+  <section class="section" id="expertise">
     <div class="container">
-      <div class="section-tag">Skills</div>
-      <h2 class="section-title">My <span class="gradient-text">Expertise</span></h2>
-      <p class="section-sub">Tools, technologies, and disciplines I work with daily.</p>
-      <div class="expertise-grid">
-        <div class="expertise-item">
-          <div class="expertise-icon">🌐</div>
-          <div class="expertise-label">WordPress</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:92%"></div></div>
+      <div class="section-header reveal-up">
+        <span class="section-tag">Technical Skills</span>
+        <h2 class="section-title">My Expertise</h2>
+        <p class="section-desc">Technologies I work with day-to-day</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-item reveal-up">
+          <div class="skill-header"><span class="skill-name">WordPress / CMS</span><span class="skill-pct">92%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:92%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">💻</div>
-          <div class="expertise-label">HTML / CSS</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:90%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.05s">
+          <div class="skill-header"><span class="skill-name">HTML / CSS</span><span class="skill-pct">90%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:90%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">⚡</div>
-          <div class="expertise-label">JavaScript</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:80%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.1s">
+          <div class="skill-header"><span class="skill-name">JavaScript / React</span><span class="skill-pct">80%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:80%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">🚀</div>
-          <div class="expertise-label">Antigravity</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:100%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.15s">
+          <div class="skill-header"><span class="skill-name">Responsive Design</span><span class="skill-pct">88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:88%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">🐍</div>
-          <div class="expertise-label">Python / ML</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:72%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.2s">
+          <div class="skill-header"><span class="skill-name">Python / ML</span><span class="skill-pct">72%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:72%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">🔍</div>
-          <div class="expertise-label">Software QA</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:85%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.25s">
+          <div class="skill-header"><span class="skill-name">Software QA</span><span class="skill-pct">85%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:85%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">🛢️</div>
-          <div class="expertise-label">Supabase</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:75%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.3s">
+          <div class="skill-header"><span class="skill-name">Supabase / PostgreSQL</span><span class="skill-pct">75%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:75%"></div></div>
         </div>
-        <div class="expertise-item">
-          <div class="expertise-icon">📱</div>
-          <div class="expertise-label">Responsive Design</div>
-          <div class="expertise-bar"><div class="expertise-fill" style="--w:88%"></div></div>
+        <div class="skill-item reveal-up" style="--delay:0.35s">
+          <div class="skill-header"><span class="skill-name">Anti-Gravity</span><span class="skill-pct">100%</span></div>
+          <div class="skill-bar"><div class="skill-fill rainbow" style="--w:100%"></div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== FAQ ===== -->
-  <section id="faq">
-    <div class="container faq-container">
-      <div class="section-tag">FAQ</div>
-      <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
-
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <span class="section-tag">FAQ</span>
+        <h2 class="section-title">Common Questions</h2>
+        <p class="section-desc">Everything you need to know before we work together</p>
+      </div>
       <div class="faq-list">
-        <div class="faq-item" id="faq-1">
-          <button class="faq-q" aria-expanded="false">
-            What services do you offer?
-            <span class="faq-icon"></span>
-          </button>
-          <div class="faq-a">
-            <p>I offer website design and development (WordPress &amp; custom), software quality assurance, IT support, and machine learning integrations. I provide end-to-end solutions from concept to deployment and maintenance.</p>
-          </div>
+        <div class="faq-item reveal-up">
+          <button class="faq-q"><span>What services do you offer?</span><div class="faq-icon"><span></span><span></span></div></button>
+          <div class="faq-a"><p>I offer full-stack web development, machine learning integration, and software quality assurance. From simple landing pages to complex platforms — I handle design, development, and deployment.</p></div>
         </div>
-        <div class="faq-item" id="faq-2">
-          <button class="faq-q" aria-expanded="false">
-            How long does a typical project take?
-            <span class="faq-icon"></span>
-          </button>
-          <div class="faq-a">
-            <p>Project timelines vary based on complexity. A simple website typically takes 1–2 weeks, while larger systems or custom applications can take 4–8 weeks. I always provide a detailed timeline during our initial discussion.</p>
-          </div>
+        <div class="faq-item reveal-up" style="--delay:0.05s">
+          <button class="faq-q"><span>How long does a project take?</span><div class="faq-icon"><span></span><span></span></div></button>
+          <div class="faq-a"><p>Timeline depends on scope. A simple website takes 1–2 weeks. A full web app takes 4–8 weeks. ML integrations vary based on data availability. I'll give you a clear estimate upfront.</p></div>
         </div>
-        <div class="faq-item" id="faq-3">
-          <button class="faq-q" aria-expanded="false">
-            Do you offer website maintenance after launch?
-            <span class="faq-icon"></span>
-          </button>
-          <div class="faq-a">
-            <p>Yes! I offer ongoing maintenance packages including updates, security monitoring, performance optimization, and content updates to ensure your website stays healthy and up-to-date.</p>
-          </div>
+        <div class="faq-item reveal-up" style="--delay:0.1s">
+          <button class="faq-q"><span>Do you offer maintenance after launch?</span><div class="faq-icon"><span></span><span></span></div></button>
+          <div class="faq-a"><p>Yes! I offer ongoing maintenance plans including bug fixes, updates, performance monitoring, and feature additions. Let's keep your project running at its best.</p></div>
         </div>
-        <div class="faq-item" id="faq-4">
-          <button class="faq-q" aria-expanded="false">
-            What is your preferred tech stack?
-            <span class="faq-icon"></span>
-          </button>
-          <div class="faq-a">
-            <p>For web projects I primarily use WordPress, HTML/CSS/JS, PHP, and MySQL. For machine learning tasks I use Python with TensorFlow or scikit-learn. I'm flexible and happy to work with the stack that best suits your project requirements.</p>
-          </div>
+        <div class="faq-item reveal-up" style="--delay:0.15s">
+          <button class="faq-q"><span>What's your preferred tech stack?</span><div class="faq-icon"><span></span><span></span></div></button>
+          <div class="faq-a"><p>Frontend: React, HTML/CSS, Tailwind. Backend: Node.js, PHP, Python. Databases: PostgreSQL, MySQL, Supabase. CMS: WordPress. ML: TensorFlow, scikit-learn, Pandas.</p></div>
         </div>
-        <div class="faq-item" id="faq-5">
-          <button class="faq-q" aria-expanded="false">
-            How do I get started working with you?
-            <span class="faq-icon"></span>
-          </button>
-          <div class="faq-a">
-            <p>Simply reach out via the contact form below or email me directly at merwinluistro25@gmail.com. I'll schedule a discovery call to understand your needs, goals, and timeline before crafting a proposal.</p>
-          </div>
+        <div class="faq-item reveal-up" style="--delay:0.2s">
+          <button class="faq-q"><span>How do we get started?</span><div class="faq-icon"><span></span><span></span></div></button>
+          <div class="faq-a"><p>Fill out the contact form below or reach out via email. We'll schedule a discovery call to discuss your needs and timeline — then I'll send a detailed proposal.</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== CONTACT ===== -->
-  <section id="contact">
+  <!-- Contact -->
+  <section class="section" id="contact">
     <div class="container">
-      <div class="section-tag">Get In Touch</div>
-      <h2 class="section-title">Let's <span class="gradient-text">Connect</span></h2>
-      <p class="section-sub">Have a project in mind? I'd love to hear from you. Send me a message and I'll get back to you as soon as possible.</p>
-
+      <div class="section-header reveal-up">
+        <span class="section-tag">Get In Touch</span>
+        <h2 class="section-title">Let's Work Together</h2>
+        <p class="section-desc">Have a project in mind? I'd love to hear about it.</p>
+      </div>
       <div class="contact-grid">
-        <div class="contact-info">
-          <div class="contact-detail" id="contact-email">
-            <div class="contact-detail-icon">📧</div>
+        <div class="contact-info reveal-left">
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
             <div>
-              <div class="contact-detail-label">Email</div>
-              <a href="mailto:merwinluistro25@gmail.com">merwinluistro25@gmail.com</a>
+              <p class="contact-label">Email</p>
+              <a href="mailto:merwinluistro25@gmail.com" class="contact-value">merwinluistro25@gmail.com</a>
             </div>
           </div>
-          <div class="contact-detail" id="contact-phone">
-            <div class="contact-detail-icon">📞</div>
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91A16 16 0 0 0 14 15.83l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
             <div>
-              <div class="contact-detail-label">Phone</div>
-              <a href="tel:+639948697561">+63 994 869 7561</a>
+              <p class="contact-label">Phone</p>
+              <a href="tel:+639123456789" class="contact-value">+63 912 345 6789</a>
             </div>
           </div>
           <div class="contact-socials">
-            <p class="contact-detail-label">Follow Me</p>
-            <div class="social-links">
-              <a href="#" class="social-btn" id="social-facebook" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-              </a>
-              <a href="#" class="social-btn" id="social-instagram" aria-label="Instagram">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-              </a>
-              <a href="#" class="social-btn" id="social-linkedin" aria-label="LinkedIn">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-              </a>
-            </div>
+            <a href="#" class="social-link magnetic" aria-label="Facebook">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="#" class="social-link magnetic" aria-label="Instagram">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="#" class="social-link magnetic" aria-label="LinkedIn">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
           </div>
         </div>
-
-        <form class="contact-form" id="contact-form" novalidate>
+        <form class="contact-form reveal-right" id="contactForm">
           <div class="form-row">
             <div class="form-group">
-              <label for="cf-name">Name</label>
-              <input type="text" id="cf-name" name="name" placeholder="Your full name" required />
+              <label for="name">Name</label>
+              <input type="text" id="name" placeholder="Your name" required>
             </div>
             <div class="form-group">
-              <label for="cf-email">Email</label>
-              <input type="email" id="cf-email" name="email" placeholder="your@email.com" required />
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="your@email.com" required>
             </div>
           </div>
           <div class="form-group">
-            <label for="cf-subject">Subject</label>
-            <input type="text" id="cf-subject" name="subject" placeholder="Project inquiry, collaboration…" />
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" placeholder="What's this about?">
           </div>
           <div class="form-group">
-            <label for="cf-message">Message</label>
-            <textarea id="cf-message" name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
+            <label for="message">Message</label>
+            <textarea id="message" rows="5" placeholder="Tell me about your project…" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary btn-full" id="form-submit">Send Message →</button>
-          <div class="form-success" id="form-success">✅ Message sent! I'll get back to you soon.</div>
+          <button type="submit" class="btn btn-primary magnetic" id="submitBtn">
+            Send Message
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+          <div class="form-success" id="formSuccess">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Message sent! I'll get back to you soon.
+          </div>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- ===== FOOTER ===== -->
-  <footer id="footer">
+  <!-- Footer -->
+  <footer class="footer">
     <div class="container footer-inner">
-      <a href="#hero" class="nav-logo">mer<span>dev</span></a>
-      <p class="footer-copy">© 2024 Merwin Luistro. All rights reserved.</p>
+      <a href="#" class="footer-logo">
+        <span class="logo-text">merdev</span>
+        <span class="logo-dot"></span>
+      </a>
+      <p class="footer-copy">© 2026 Merwin Lustro. Built with passion and caffeine.</p>
       <div class="footer-links">
         <a href="#about">About</a>
-        <a href="#projects">Projects</a>
+        <a href="#projects">Work</a>
         <a href="#contact">Contact</a>
       </div>
     </div>
