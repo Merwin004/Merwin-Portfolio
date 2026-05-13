@@ -921,11 +921,14 @@ button { font-family: inherit; }
     text-align: center;
     gap: 36px;
   }
-  .hero-visual { order: -1; }
   .hero-content { max-width: 100%; }
   .hero-cta { justify-content: center; }
   .hero-stats { justify-content: center; }
   .hero-desc { margin: 0 auto 30px; }
+
+  /* Hide constellation on mobile — single column hero needs full width */
+  .constellation-wrapper { display: none; }
+  .hero-container { grid-template-columns: 1fr; }
 
   /* Timeline mobile */
   .timeline::before { left: 14px; transform: none; }
