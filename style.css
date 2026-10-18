@@ -1912,3 +1912,133 @@ img, svg, canvas, video { max-width: 100%; }
 .project-preview.is-kiosk { display: flex; flex-direction: column; align-items: center; }
 .is-kiosk .pp-cap { margin-top: 24px; }
 .is-kiosk .kiosk-neck { width: 26px; height: 22px; }
+
+
+/* =====================================================================
+   PROJECT PREVIEW — several pictures per project
+   ===================================================================== */
+/* gallery stage: fixed 16:9 so the card doesn't jump in height between pictures */
+.pp-screen.has-img.gallery { aspect-ratio: 16 / 9; }
+.pp-screen.has-img.gallery img {
+  position: absolute; inset: 0; width: 100%; height: 100%; max-height: none;
+  object-fit: contain; background: #0b0d6e;
+}
+/* scan-in each time the picture changes */
+.project-preview .pp-screen.swap > img, .project-preview .kiosk-bezel.swap img { animation: ppSwap 0.8s var(--ease) both; }
+.project-preview .pp-screen.swap .pp-scanline, .project-preview .kiosk-bezel.swap .pp-scanline { animation: ppSwapLine 0.8s var(--ease) both; }
+@keyframes ppSwap { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes ppSwapLine { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+/* dots */
+.pp-dots { display: flex; justify-content: center; gap: 6px; padding: 12px 0 0; }
+.pp-dots[hidden] { display: none; }
+.pp-dots span { width: 6px; height: 6px; border-radius: 100px; background: rgba(255, 255, 255, 0.35); transition: width 0.3s var(--ease), background 0.3s var(--ease); }
+.pp-dots span.on { width: 20px; background: #e6f3ff; box-shadow: 0 0 10px rgba(230, 243, 255, 0.7); }
+.is-kiosk .pp-dots { padding-top: 18px; }
+.is-kiosk .pp-cap { margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .project-preview .pp-screen.swap > img, .project-preview .kiosk-bezel.swap img,
+  .project-preview .pp-screen.swap .pp-scanline, .project-preview .kiosk-bezel.swap .pp-scanline { animation: none; }
+}
+
+
+/* gallery pictures fill the frame edge to edge (frame already matches the first picture's proportions) */
+.pp-screen.has-img.gallery { background: #fff; }
+.pp-screen.has-img.gallery img { object-fit: cover; object-position: top center; background: #fff; }
+
+
+/* =====================================================================
+   PHONE DEVICE MOCKUP (Patikar Inc. preview) — reuses the device frame
+   ===================================================================== */
+.project-preview.is-phone {
+  width: auto; padding: 0; background: none; border: 0; box-shadow: none; overflow: visible;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  display: flex; flex-direction: column; align-items: center;
+}
+.is-phone .pp-kiosk { --kw: min(236px, calc((100vh - 260px) * var(--ar, 0.59))); padding: 0; position: relative; }
+.is-phone .kiosk-body {
+  position: relative;
+  width: calc(var(--kw) + 20px);
+  padding: 10px;
+  border-radius: 38px;
+  background: linear-gradient(165deg, #2c338f 0%, #12165f 55%, #0a0c42 100%);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 28px 54px rgba(2, 2, 36, 0.62);
+}
+/* side buttons */
+.is-phone .kiosk-body::before, .is-phone .kiosk-body::after {
+  content: ''; position: absolute; width: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.3);
+}
+.is-phone .kiosk-body::before { left: -4px; top: 74px; height: 34px; box-shadow: 0 46px 0 rgba(255,255,255,0.3); }
+.is-phone .kiosk-body::after { right: -4px; top: 96px; height: 52px; }
+.is-phone .kiosk-bezel { border: 0; border-radius: 29px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6); background: #fff; }
+.is-phone .kiosk-bezel img { object-position: top center; }
+/* dynamic island floats over the top of the screen */
+.is-phone .kiosk-top { position: absolute; left: 0; right: 0; top: 19px; margin: 0; height: auto; z-index: 4; }
+.is-phone .k-cam { display: none; }
+.is-phone .k-led { display: block; width: 62px; height: 18px; border-radius: 100px; background: #02031a; box-shadow: none; }
+.is-phone .kiosk-deck, .is-phone .kiosk-neck, .is-phone .kiosk-base { display: none; }
+.is-phone .kiosk-glare { background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, transparent 30%); }
+
+.is-phone .pp-dots { padding-top: 18px; }
+.is-phone .pp-cap {
+  align-self: center; flex-direction: row; align-items: center; gap: 10px;
+  margin: 12px auto 0; padding: 8px 16px; width: max-content; border-radius: 100px;
+  background: rgba(10, 12, 78, 0.72); border: 1px solid rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.is-phone .pp-cap b { font-size: 0.9rem; }
+.is-phone .pp-meta { font-size: 0.62rem; }
+
+/* =====================================================================
+   PHONE — clean pass: thinner frame, no side buttons, smaller island
+   ===================================================================== */
+.is-phone .kiosk-body::before, .is-phone .kiosk-body::after { display: none; }
+.is-phone .kiosk-body {
+  width: calc(var(--kw) + 16px);
+  padding: 8px;
+  border-radius: 36px;
+  background: #0d1052;
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
+  box-shadow: 0 24px 48px rgba(2, 2, 36, 0.55);
+}
+.is-phone .kiosk-bezel { border-radius: 28px; box-shadow: none; }
+.is-phone .kiosk-glare { display: none; }
+.is-phone .kiosk-top { top: 16px; }
+.is-phone .k-led { width: 52px; height: 15px; background: #05061f; }
+.is-phone .pp-dots { padding-top: 16px; }
+.is-phone .pp-cap { margin-top: 14px; }
+
+
+/* =====================================================================
+   PRIVATE PROJECTS (no pictures) — locked preview + lock marker on the card
+   ===================================================================== */
+.pp-lock[hidden] { display: none; }
+.pp-lock {
+  position: absolute; inset: 0; z-index: 4;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  padding: 18px; text-align: center;
+  background: rgba(8, 10, 70, 0.55);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.pp-lock-ico {
+  width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; margin-bottom: 4px;
+  color: #fff;
+  background: linear-gradient(145deg, rgba(255,255,255,0.28), rgba(255,255,255,0.08));
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 8px 22px rgba(2,2,36,0.4);
+}
+.pp-lock b { font-family: var(--font-display); font-size: 1.02rem; color: #fff; }
+.pp-lock em { font-style: normal; font-size: 0.78rem; line-height: 1.45; color: var(--text-2); max-width: 230px; }
+/* the placeholder layout stays faintly visible behind the lock, scan animation off */
+.project-preview.is-private .pp-mock { opacity: 0.55; }
+.project-preview.is-private .pp-scanline { display: none; }
+.project-preview.is-private .pp-cap { opacity: 0.95; }
+
+/* small lock before the year on private project cards */
+.project-card.is-private .project-year::before {
+  content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2.5'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2.5'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center / contain no-repeat;
+}

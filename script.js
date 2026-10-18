@@ -301,7 +301,7 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
 })();
 
 
-// ===== PROJECT HOVER: scan + floating picture preview =====
+// ===== PROJECT HOVER: scan + floating picture preview (supports several pictures per project) =====
 (function () {
   const preview = document.getElementById('projectPreview');
   const cards = document.querySelectorAll('.project-card[data-project]');
@@ -314,28 +314,53 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
   const ppScreen = document.getElementById('ppScreen');
   const ppKiosk = document.getElementById('ppKiosk');
   const ppKioskImg = document.getElementById('ppKioskImg');
+  const ppBezel = ppKiosk.querySelector('.kiosk-bezel');
   const ppMockTitle = document.getElementById('ppMockTitle');
+  const ppDots = document.getElementById('ppDots');
+  const ppLock = document.getElementById('ppLock');
   const touch = window.matchMedia('(hover: none)').matches;
   const EXTS = ['webp', 'png', 'jpg', 'jpeg'];
-  const found = {};                       // slug -> url | null (cache of image lookups)
+  const MAX_PICS = 8, CYCLE_MS = 2800, MANUAL_HOLD_MS = 4500;
+  const galleries = {};                 // slug -> Promise<string[]>  (cache of image lookups)
 
-  // find a real screenshot in assets/projects/<slug>.(webp|png|jpg|jpeg); fall back to the generated mock
-  function findImage(slug) {
-    if (slug in found) return Promise.resolve(found[slug]);
-    return new Promise(resolve => {
-      let i = 0;
-      (function next() {
-        if (i >= EXTS.length) { found[slug] = null; return resolve(null); }
-        const url = `assets/projects/${slug}.${EXTS[i++]}`;
-        const probe = new Image();
-        probe.onload = () => { found[slug] = url; resolve(url); };
-        probe.onerror = next;
-        probe.src = url;
+  // Pictures live in assets/projects/. A project can have one picture:   <slug>.png
+  // or several:  <slug>-1.png, <slug>-2.png, <slug>-3.png ...   (webp / png / jpg / jpeg all work)
+  function probe(base) {                 // try every extension at once, first hit wins (order of EXTS decides ties)
+    return Promise.all(EXTS.map(ext => new Promise(resolve => {
+      const url = `${base}.${ext}`;
+      const t = new Image();
+      t.onload = () => resolve(url);
+      t.onerror = () => resolve(null);
+      t.src = url;
+    }))).then(list => list.find(Boolean) || null);
+  }
+  function findPictures(slug) {
+    if (!galleries[slug]) {
+      galleries[slug] = (async () => {
+        const out = [];
+        const single = await probe(`assets/projects/${slug}`);
+        if (single) out.push(single);
+        for (let n = 1; n <= MAX_PICS; n++) {
+          const u = await probe(`assets/projects/${slug}-${n}`);
+          if (!u) break;
+          out.push(u);
+        }
+        return out;
       })();
-    });
+    }
+    return galleries[slug];
   }
 
+  window.addEventListener('load', () => {
+    const warm = () => cards.forEach(c => findPictures(c.dataset.project).then(list => {
+      if (!list.length) c.classList.add('is-private');                  // no pictures -> private project
+      list.forEach(u => { new Image().src = u; });
+    }));
+    ('requestIdleCallback' in window) ? requestIdleCallback(warm, { timeout: 2500 }) : setTimeout(warm, 1200);
+  });
+
   let current = null, x = 0, y = 0, tx = 0, ty = 0, raf = 0;
+  let pics = [], idx = 0, kioskMode = false, cycle = 0, manualUntil = 0, entryX = 0;
 
   function place(instant) {
     const w = preview.offsetWidth, hgt = preview.offsetHeight, pad = 18;
@@ -352,8 +377,56 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
     raf = requestAnimationFrame(loop);
   }
 
+  // ---- gallery ----
+  function renderDots() {
+    ppDots.hidden = pics.length < 2;
+    ppDots.innerHTML = pics.length < 2 ? '' : pics.map((_, i) => `<span class="${i === idx ? 'on' : ''}"></span>`).join('');
+  }
+  function setPic(i, animate) {
+    if (!pics.length) return;
+    idx = (i + pics.length) % pics.length;
+    const target = kioskMode ? ppKioskImg : img;
+    const box = kioskMode ? ppBezel : ppScreen;
+    const url = pics[idx];
+    const done = () => {
+      if (!current) return;
+      target.src = url;
+      target.alt = ppTitle.textContent + (kioskMode ? ' kiosk screen' : ' screenshot') + ` ${idx + 1} of ${pics.length}`;
+      target.hidden = false;
+      if (!kioskMode) {
+        mock.hidden = true; ppScreen.classList.add('has-img');
+        if (pics.length > 1 && !ppScreen.style.aspectRatio && pre.naturalWidth) {      // frame takes the shape of the first picture -> no letterbox bars
+          const r = Math.max(1.3, Math.min(2.4, pre.naturalWidth / pre.naturalHeight));
+          ppScreen.style.aspectRatio = r.toFixed(3);
+        }
+      }
+      if (kioskMode && !ppBezel.style.aspectRatio && pre.naturalWidth) {        // device screen takes the real proportions of its first picture
+        ppBezel.style.aspectRatio = `${pre.naturalWidth} / ${pre.naturalHeight}`;
+        ppKiosk.style.setProperty('--ar', (pre.naturalWidth / pre.naturalHeight).toFixed(3));
+      }
+      if (animate) { box.classList.remove('swap'); void box.offsetWidth; box.classList.add('swap'); }   // scan-in the new picture
+      renderDots();
+    };
+    const pre = new Image();
+    pre.onload = pre.onerror = done;
+    pre.src = url;
+  }
+  function stopCycle() { clearInterval(cycle); cycle = 0; }
+  function startCycle() {
+    stopCycle();
+    if (pics.length < 2) return;
+    cycle = setInterval(() => { if (performance.now() > manualUntil) setPic(idx + 1, true); }, CYCLE_MS);
+  }
+  function scrub(clientX, card) {
+    if (pics.length < 2 || Math.abs(clientX - entryX) < 30) return;      // ignore tiny movements right after entering
+    const r = card.getBoundingClientRect();
+    const i = Math.max(0, Math.min(pics.length - 1, Math.floor((clientX - r.left) / r.width * pics.length)));
+    if (i !== idx) { setPic(i, true); manualUntil = performance.now() + MANUAL_HOLD_MS; }
+  }
+
   async function show(card, clientX, clientY) {
     current = card;
+    stopCycle(); pics = []; idx = 0; manualUntil = 0; entryX = clientX;
     const slug = card.dataset.project;
     const title = card.querySelector('h3').textContent;
     const cat = card.querySelector('.project-category').textContent;
@@ -361,31 +434,47 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
     ppTitle.textContent = title; ppCat.textContent = cat + ' · ' + year;
     ppMockTitle.textContent = title;
     tx = clientX; ty = clientY;
-    const kiosk = card.dataset.device === 'kiosk';
-    preview.classList.toggle('is-kiosk', kiosk);
-    ppKiosk.hidden = !kiosk; ppScreen.hidden = kiosk; ppKioskImg.hidden = true;
-    img.hidden = true; mock.hidden = false; ppScreen.classList.remove('has-img');
+    const device = card.dataset.device || '';                    // 'kiosk' | 'phone' | '' (plain screenshot)
+    kioskMode = !!device;
+    preview.classList.toggle('is-kiosk', device === 'kiosk');
+    preview.classList.toggle('is-phone', device === 'phone');
+    ppKiosk.style.removeProperty('--ar'); ppBezel.style.aspectRatio = '';
+    ppKiosk.hidden = !kioskMode; ppScreen.hidden = kioskMode; ppKioskImg.hidden = true;
+    img.hidden = true; mock.hidden = false;
+    ppScreen.classList.remove('has-img', 'gallery', 'swap'); ppBezel.classList.remove('swap'); ppScreen.style.aspectRatio = '';
+    ppDots.hidden = true; ppDots.innerHTML = '';
+    ppLock.hidden = true; preview.classList.remove('is-private');
     preview.classList.remove('live'); void preview.offsetWidth;   // restart the scan-reveal animation
     place(true);
     preview.classList.add('open', 'live');
     preview.setAttribute('aria-hidden', 'false');
     if (!raf) raf = requestAnimationFrame(loop);
 
-    const url = await findImage(slug);
+    const found = await findPictures(slug);
     if (current !== card) return;
-    if (url && kiosk) { ppKioskImg.src = url; ppKioskImg.alt = title + ' kiosk screen'; ppKioskImg.hidden = false; }
-    else if (url) { img.src = url; img.alt = title + ' screenshot'; img.hidden = false; mock.hidden = true; ppScreen.classList.add('has-img'); }
+    if (!found.length) {                                  // nothing to show: private project
+      card.classList.add('is-private');
+      ppLock.hidden = false; preview.classList.add('is-private');
+      return;
+    }
+    pics = found;
+    if (pics.length > 1 && !kioskMode) ppScreen.classList.add('gallery');
+    setPic(0, false);
+    startCycle();
   }
   function hide() {
-    current = null;
-    preview.classList.remove('open', 'live');
+    current = null; stopCycle();
+    preview.classList.remove('open', 'live', 'sheet');
     preview.setAttribute('aria-hidden', 'true');
   }
 
   cards.forEach(card => {
     if (!touch) {
       card.addEventListener('mouseenter', e => show(card, e.clientX, e.clientY));
-      card.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; if (!current) show(card, tx, ty); }, { passive: true });
+      card.addEventListener('mousemove', e => {
+        tx = e.clientX; ty = e.clientY;
+        if (!current) show(card, tx, ty); else scrub(e.clientX, card);
+      }, { passive: true });
       card.addEventListener('mouseleave', hide);
     }
     card.addEventListener('focus', () => { const r = card.getBoundingClientRect(); show(card, r.right - 40, r.top + r.height / 2); });
@@ -399,7 +488,15 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
       });
     }
   });
-  if (touch) document.addEventListener('click', () => { if (current) { hide(); preview.classList.remove('sheet'); } });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+  if (touch) {
+    preview.addEventListener('click', e => {                 // tap the preview to go to the next picture
+      if (pics.length > 1) { setPic(idx + 1, true); manualUntil = performance.now() + MANUAL_HOLD_MS; e.stopPropagation(); }
+    });
+    document.addEventListener('click', () => { if (current) hide(); });
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hide();
+    if (current && pics.length > 1 && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { setPic(idx + (e.key === 'ArrowRight' ? 1 : -1), true); manualUntil = performance.now() + MANUAL_HOLD_MS; }
+  });
   window.addEventListener('scroll', () => { if (current && !touch) hide(); }, { passive: true });
 })();
