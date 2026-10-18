@@ -185,6 +185,8 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
   if (!gl) return;
 
   const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }';
+
+  // Original liquid look: 4-octave nested domain warp, lit with finite differences (sharp detail).
   const fs = `
     precision highp float;
     uniform vec2 res; uniform float t;
@@ -196,35 +198,37 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
     }
     float fbm(vec2 p){
       float v = 0.0, a = 0.5;
-      for(int i=0;i<3;i++){ v += a*noise(p); p = p*2.03 + vec2(1.7,9.2); a *= 0.5; }
+      for(int i=0;i<4;i++){ v += a*noise(p); p = p*2.03 + vec2(1.7,9.2); a *= 0.5; }
       return v;
     }
     float height(vec2 p){
       vec2 q = vec2(fbm(p + vec2(0.0, t*0.10)), fbm(p + vec2(5.2, 1.3) - t*0.08));
-      return fbm(p + 2.8*q) + 0.3*sin(p.y*3.0 + q.x*6.0 - t*0.35);
+      vec2 r = vec2(fbm(p + 3.0*q + vec2(1.7, 9.2) + t*0.12), fbm(p + 3.0*q + vec2(8.3, 2.8) - t*0.10));
+      return fbm(p + 3.2*r) + 0.35*sin(p.y*3.0 + r.x*6.0 - t*0.35);
     }
     void main(){
       vec2 uv = gl_FragCoord.xy / res.xy;
-      vec2 p = vec2(uv.x * res.x / res.y * 2.2, uv.y * 1.3 + 0.0);
+      vec2 p = vec2(uv.x * res.x / res.y * 2.2, uv.y * 1.3);
       p.y += uv.x * 0.8;
-      float e = 0.006;
-      float h  = height(p);
+      float h = height(p);
+      float e = 0.004;
       float hx = height(p + vec2(e, 0.0));
       float hy = height(p + vec2(0.0, e));
-      vec3 n = normalize(vec3((h - hx) / e * 0.045, (h - hy) / e * 0.045, 1.0));
+      vec2 g = vec2(hx - h, hy - h) / e;
+      vec3 n = normalize(vec3(-g * 0.045, 1.0));
       vec3 L = normalize(vec3(-0.45, 0.6, 0.65));
       float diff = clamp(dot(n, L), 0.0, 1.0);
       vec3 V = vec3(0.0, 0.0, 1.0);
       float spec = pow(clamp(dot(reflect(-L, n), V), 0.0, 1.0), 26.0);
       float rim = pow(1.0 - clamp(n.z, 0.0, 1.0), 1.6);
-      vec3 navy = vec3(0.05, 0.05, 0.38);
+      vec3 navy = vec3(0.02, 0.02, 0.28);
       vec3 royal = vec3(0.10, 0.12, 0.82);
       vec3 peri = vec3(0.56, 0.58, 0.97);
-      float k = smoothstep(0.15, 0.85, diff + (h - 0.6) * 0.6);
+      float k = smoothstep(0.25, 0.95, diff + (h - 0.6) * 0.6);
       vec3 col = mix(navy, royal, smoothstep(0.0, 0.55, k));
       col = mix(col, peri, smoothstep(0.5, 1.0, k + rim * 0.5));
       col += vec3(0.85, 0.88, 1.0) * spec * 0.9;
-      col *= 0.9 + 0.25 * smoothstep(0.0, 1.0, uv.y);
+      col *= 0.82 + 0.25 * smoothstep(0.0, 1.0, uv.y);
       gl_FragColor = vec4(col, 1.0);
     }`;
 
@@ -249,8 +253,8 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
   const uRes = gl.getUniformLocation(prog, 'res'), uT = gl.getUniformLocation(prog, 't');
 
   // render at reduced resolution (CSS scales it up); adapt to the device's speed
-  let scale = window.innerWidth < 700 ? 0.3 : 0.4;
-  const MIN_SCALE = 0.2;
+  let scale = 0.5;
+  const MIN_SCALE = 0.3;
   function resize() {
     canvas.width = Math.max(2, Math.floor(window.innerWidth * scale));
     canvas.height = Math.max(2, Math.floor(window.innerHeight * scale));
@@ -260,7 +264,7 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
   resize();
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const FRAME_MS = 1000 / 30;           // 30fps is plenty for slow liquid motion and halves the glass re-blur cost
+  const FRAME_MS = 1000 / 60;
   const start = performance.now();
   let last = 0, slow = 0, running = false;
 
@@ -272,7 +276,7 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
     last = now;
 
     // if frames keep taking too long, drop the resolution a notch
-    if (dt > 50) { if (++slow > 20 && scale > MIN_SCALE) { scale = Math.max(MIN_SCALE, scale - 0.05); slow = 0; resize(); } }
+    if (dt > 40) { if (++slow > 20 && scale > MIN_SCALE) { scale = Math.max(MIN_SCALE, scale - 0.05); slow = 0; resize(); } }
     else if (slow > 0) slow--;
 
     gl.uniform2f(uRes, canvas.width, canvas.height);
