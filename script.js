@@ -299,3 +299,107 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
   tick();
   setInterval(tick, 1000);
 })();
+
+
+// ===== PROJECT HOVER: scan + floating picture preview =====
+(function () {
+  const preview = document.getElementById('projectPreview');
+  const cards = document.querySelectorAll('.project-card[data-project]');
+  if (!preview || !cards.length) return;
+
+  const img = document.getElementById('ppImg');
+  const mock = document.getElementById('ppMock');
+  const ppTitle = document.getElementById('ppTitle');
+  const ppCat = document.getElementById('ppCat');
+  const ppScreen = document.getElementById('ppScreen');
+  const ppKiosk = document.getElementById('ppKiosk');
+  const ppKioskImg = document.getElementById('ppKioskImg');
+  const ppMockTitle = document.getElementById('ppMockTitle');
+  const touch = window.matchMedia('(hover: none)').matches;
+  const EXTS = ['webp', 'png', 'jpg', 'jpeg'];
+  const found = {};                       // slug -> url | null (cache of image lookups)
+
+  // find a real screenshot in assets/projects/<slug>.(webp|png|jpg|jpeg); fall back to the generated mock
+  function findImage(slug) {
+    if (slug in found) return Promise.resolve(found[slug]);
+    return new Promise(resolve => {
+      let i = 0;
+      (function next() {
+        if (i >= EXTS.length) { found[slug] = null; return resolve(null); }
+        const url = `assets/projects/${slug}.${EXTS[i++]}`;
+        const probe = new Image();
+        probe.onload = () => { found[slug] = url; resolve(url); };
+        probe.onerror = next;
+        probe.src = url;
+      })();
+    });
+  }
+
+  let current = null, x = 0, y = 0, tx = 0, ty = 0, raf = 0;
+
+  function place(instant) {
+    const w = preview.offsetWidth, hgt = preview.offsetHeight, pad = 18;
+    let nx = tx + 28, ny = ty - hgt / 2;
+    if (nx + w + pad > window.innerWidth) nx = tx - w - 28;      // flip to the left near the right edge
+    nx = Math.max(pad, Math.min(nx, window.innerWidth - w - pad));
+    ny = Math.max(pad, Math.min(ny, window.innerHeight - hgt - pad));
+    if (instant) { x = nx; y = ny; } else { x += (nx - x) * 0.18; y += (ny - y) * 0.18; }
+    preview.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+  }
+  function loop() {
+    if (!current) { raf = 0; return; }
+    place(false);
+    raf = requestAnimationFrame(loop);
+  }
+
+  async function show(card, clientX, clientY) {
+    current = card;
+    const slug = card.dataset.project;
+    const title = card.querySelector('h3').textContent;
+    const cat = card.querySelector('.project-category').textContent;
+    const year = card.querySelector('.project-year').textContent;
+    ppTitle.textContent = title; ppCat.textContent = cat + ' · ' + year;
+    ppMockTitle.textContent = title;
+    tx = clientX; ty = clientY;
+    const kiosk = card.dataset.device === 'kiosk';
+    preview.classList.toggle('is-kiosk', kiosk);
+    ppKiosk.hidden = !kiosk; ppScreen.hidden = kiosk; ppKioskImg.hidden = true;
+    img.hidden = true; mock.hidden = false; ppScreen.classList.remove('has-img');
+    preview.classList.remove('live'); void preview.offsetWidth;   // restart the scan-reveal animation
+    place(true);
+    preview.classList.add('open', 'live');
+    preview.setAttribute('aria-hidden', 'false');
+    if (!raf) raf = requestAnimationFrame(loop);
+
+    const url = await findImage(slug);
+    if (current !== card) return;
+    if (url && kiosk) { ppKioskImg.src = url; ppKioskImg.alt = title + ' kiosk screen'; ppKioskImg.hidden = false; }
+    else if (url) { img.src = url; img.alt = title + ' screenshot'; img.hidden = false; mock.hidden = true; ppScreen.classList.add('has-img'); }
+  }
+  function hide() {
+    current = null;
+    preview.classList.remove('open', 'live');
+    preview.setAttribute('aria-hidden', 'true');
+  }
+
+  cards.forEach(card => {
+    if (!touch) {
+      card.addEventListener('mouseenter', e => show(card, e.clientX, e.clientY));
+      card.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; if (!current) show(card, tx, ty); }, { passive: true });
+      card.addEventListener('mouseleave', hide);
+    }
+    card.addEventListener('focus', () => { const r = card.getBoundingClientRect(); show(card, r.right - 40, r.top + r.height / 2); });
+    card.addEventListener('blur', hide);
+    if (touch) {
+      card.addEventListener('click', e => {
+        if (current === card) return hide();
+        show(card, window.innerWidth / 2 - preview.offsetWidth / 2 - 28, window.innerHeight / 2);
+        preview.classList.add('sheet');
+        e.stopPropagation();
+      });
+    }
+  });
+  if (touch) document.addEventListener('click', () => { if (current) { hide(); preview.classList.remove('sheet'); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+  window.addEventListener('scroll', () => { if (current && !touch) hide(); }, { passive: true });
+})();

@@ -1660,3 +1660,255 @@ img, svg, canvas, video { max-width: 100%; }
   }
   body.menu-open { overflow: hidden; }
 }
+
+
+/* =====================================================================
+   PROJECTS: hover scan + floating picture preview
+   ===================================================================== */
+.project-card { cursor: default; outline-offset: 4px; }
+.project-card .project-arrow { display: none; }
+
+/* scan frame: corner brackets that draw in on hover */
+.scan-frame {
+  position: absolute; inset: 12px; pointer-events: none; z-index: 2;
+  --c: rgba(230, 243, 255, 0.95);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top left / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) top right / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom left / 2px 18px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 18px 2px no-repeat,
+    linear-gradient(var(--c), var(--c)) bottom right / 2px 18px no-repeat;
+  opacity: 0; transform: scale(1.04);
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+}
+/* scanning light bar */
+.project-card::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 38%;
+  pointer-events: none; z-index: 1; opacity: 0;
+  background: linear-gradient(to bottom, transparent, rgba(170, 190, 255, 0.16) 55%, rgba(235, 242, 255, 0.55) 98%, transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  transform: translateY(-100%);
+}
+.project-card:hover .scan-frame, .project-card:focus-visible .scan-frame { opacity: 1; transform: scale(1); }
+.project-card:hover::after, .project-card:focus-visible::after { opacity: 1; animation: cardScan 1.9s var(--ease) infinite; }
+@keyframes cardScan { 0% { transform: translateY(-100%); } 70%, 100% { transform: translateY(290%); } }
+.project-card:hover .project-icon { background: linear-gradient(145deg, #7c8cff, #5b6dff); color: #fff; }
+
+/* floating preview */
+.project-preview {
+  position: fixed; left: 0; top: 0; z-index: 9990;
+  width: min(360px, 86vw);
+  border-radius: 20px;
+  background: rgba(10, 12, 78, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  box-shadow: 0 30px 80px rgba(2, 2, 36, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  overflow: hidden; pointer-events: none;
+  opacity: 0; visibility: hidden; will-change: transform, opacity;
+  transition: opacity 0.25s var(--ease), visibility 0s linear 0.25s;
+}
+.project-preview.open { opacity: 1; visibility: visible; transition: opacity 0.25s var(--ease), visibility 0s; }
+.project-preview.sheet { pointer-events: auto; }
+.pp-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); }
+.pp-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.35); }
+.pp-bar i:nth-child(1) { background: #ff8fa3; } .pp-bar i:nth-child(2) { background: #ffd98f; } .pp-bar i:nth-child(3) { background: #9ff0b8; }
+.pp-bar span { margin-left: 10px; font: 500 0.68rem var(--font-mono); color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pp-screen { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: linear-gradient(160deg, #2a30c4, #0b0d6e); }
+.pp-screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.pp-cap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px 14px; }
+.pp-cap b { font-family: var(--font-display); font-size: 0.95rem; }
+.pp-cap span { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cyan); white-space: nowrap; }
+
+/* scan-reveal: the screenshot is "scanned in" top to bottom with a glowing line */
+.project-preview.live .pp-screen > img, .project-preview.live .pp-mock { animation: ppReveal 0.9s var(--ease) both; }
+.pp-scanline { position: absolute; left: 0; right: 0; top: 0; height: 2px; opacity: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, #fff, transparent); box-shadow: 0 0 18px 4px rgba(190, 205, 255, 0.9); }
+.project-preview.live .pp-scanline { animation: ppLine 0.9s var(--ease) both; }
+@keyframes ppReveal { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes ppLine { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+/* generated placeholder shown until a real screenshot exists in assets/projects/ */
+.pp-mock { position: absolute; inset: 0; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.mock-nav { display: flex; align-items: center; gap: 8px; }
+.mock-nav b { width: 54px; height: 9px; border-radius: 6px; background: rgba(255,255,255,0.8); margin-right: auto; }
+.mock-nav span { width: 26px; height: 6px; border-radius: 6px; background: rgba(255,255,255,0.35); }
+.mock-hero { flex: 1; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 7px; justify-content: center;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06)); border: 1px solid rgba(255,255,255,0.22); }
+.mock-hero strong { font: 700 0.95rem var(--font-display); line-height: 1.2; }
+.mock-hero em { display: block; height: 6px; width: 78%; border-radius: 6px; background: rgba(255,255,255,0.3); }
+.mock-hero em + em { width: 56%; }
+.mock-hero u { display: block; width: 64px; height: 18px; border-radius: 100px; background: linear-gradient(135deg, #7c8cff, #5b6dff); margin-top: 4px; }
+.mock-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; height: 38px; }
+.mock-cards s { border-radius: 9px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.2); }
+
+/* touch devices: tapping a project opens the preview centred */
+@media (prefers-reduced-motion: reduce) {
+  .project-card:hover::after, .project-card:focus-visible::after { animation: none; opacity: 0.6; transform: translateY(40%); }
+  .project-preview.live .pp-screen > img, .project-preview.live .pp-mock, .project-preview.live .pp-scanline { animation: none; }
+}
+
+.pp-mock[hidden], .pp-screen img[hidden] { display: none; }
+
+
+/* =====================================================================
+   PROJECT PREVIEW — clean card redesign (overrides the first version)
+   ===================================================================== */
+.project-preview {
+  width: min(460px, 90vw);
+  padding: 10px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(34, 40, 170, 0.82), rgba(8, 10, 70, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 34px 90px rgba(2, 2, 36, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.pp-bar { display: none; }
+.pp-screen {
+  border-radius: 15px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: #0b0d6e;
+}
+/* real screenshot: show it whole, at its own proportions */
+.pp-screen.has-img { aspect-ratio: auto; background: #0b0d6e; }
+.pp-screen.has-img img {
+  position: static;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  object-position: center;
+}
+.pp-cap {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  padding: 14px 8px 6px;
+}
+.pp-meta {
+  font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--cyan);
+}
+.pp-cap b {
+  font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; line-height: 1.25;
+  color: #fff; white-space: normal;
+}
+
+
+/* =====================================================================
+   KIOSK DEVICE MOCKUP (DOLE Kiosk preview)
+   ===================================================================== */
+.project-preview.is-kiosk { width: min(330px, 86vw); }
+.pp-kiosk[hidden], .pp-screen[hidden] { display: none; }
+.pp-kiosk {
+  --kw: min(236px, calc((100vh - 330px) * 0.5));        /* screen width, keeps the whole kiosk inside the viewport */
+  display: flex; flex-direction: column; align-items: center;
+  padding: 6px 0 0;
+}
+.kiosk-body {
+  position: relative;
+  width: calc(var(--kw) + 34px);
+  padding: 12px 17px 14px;
+  border-radius: 26px 26px 18px 18px;
+  background: linear-gradient(160deg, #3a4296 0%, #181c6b 38%, #0b0d45 100%);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -10px 24px rgba(0,0,20,0.5), 0 22px 44px rgba(0,0,30,0.55);
+}
+.kiosk-top { display: flex; align-items: center; justify-content: center; gap: 10px; height: 14px; margin-bottom: 9px; }
+.k-cam { width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #7f8cff, #0a0c3a 70%); box-shadow: 0 0 0 2px rgba(255,255,255,0.12); }
+.k-led { width: 34px; height: 4px; border-radius: 4px; background: linear-gradient(90deg, #ffd23f, #ffe98a); box-shadow: 0 0 10px rgba(255, 210, 63, 0.7); }
+.kiosk-bezel {
+  position: relative; width: var(--kw);
+  aspect-ratio: 688 / 1234;                              /* the kiosk screen's real proportions */
+  border-radius: 11px; overflow: hidden;
+  background: #050629;
+  border: 3px solid #05061f;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.18), inset 0 0 18px rgba(0,0,0,0.6);
+}
+.kiosk-bezel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.kiosk-bezel img[hidden] { display: none; }
+.kiosk-glare {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: linear-gradient(115deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 22%, transparent 36%);
+}
+.kiosk-deck { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 11px; }
+.k-slot { width: 46px; height: 6px; border-radius: 6px; background: #03041c; box-shadow: inset 0 1px 2px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.18); }
+.k-slot-s { width: 28px; }
+.k-pad { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(145deg, #1d2290, #090b45); border: 1px solid rgba(255,255,255,0.25); box-shadow: inset 0 0 8px rgba(120,140,255,0.5); }
+.kiosk-neck { width: 36px; height: 20px; background: linear-gradient(90deg, #0b0d45, #2a3188 50%, #0b0d45); border-left: 1px solid rgba(255,255,255,0.15); border-right: 1px solid rgba(255,255,255,0.15); }
+.kiosk-base { width: calc(var(--kw) * 0.78); height: 11px; border-radius: 50% / 100% 100% 0 0; background: linear-gradient(180deg, #3a4296, #0b0d45); border: 1px solid rgba(255,255,255,0.22); border-bottom: 0; box-shadow: 0 14px 22px rgba(0,0,30,0.55); }
+
+/* scan reveal over the kiosk screen */
+.project-preview.live .kiosk-bezel img { animation: ppReveal 1s var(--ease) both; }
+.kiosk-bezel .pp-scanline { z-index: 3; }
+.project-preview.live .kiosk-bezel .pp-scanline { animation: ppLine 1s var(--ease) both; }
+
+.project-preview.is-kiosk .pp-cap { align-items: center; text-align: center; padding-top: 12px; }
+
+/* =====================================================================
+   KIOSK — clean pass: free-standing device, minimal details
+   ===================================================================== */
+.project-preview.is-kiosk {
+  width: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  overflow: visible;
+}
+.is-kiosk .pp-kiosk { --kw: min(250px, calc((100vh - 290px) * 0.5)); padding: 0; }
+
+/* slim, single-piece body */
+.is-kiosk .kiosk-body {
+  width: calc(var(--kw) + 24px);
+  padding: 12px;
+  border-radius: 24px;
+  background: linear-gradient(165deg, #2c338f 0%, #12165f 55%, #0a0c42 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 26px 50px rgba(2, 2, 36, 0.6);
+}
+.is-kiosk .kiosk-top { height: 8px; margin: 0 0 8px; }
+.is-kiosk .k-led, .is-kiosk .kiosk-deck { display: none; }
+.is-kiosk .k-cam { width: 5px; height: 5px; box-shadow: none; background: rgba(255, 255, 255, 0.55); }
+.is-kiosk .kiosk-bezel {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.is-kiosk .kiosk-glare { background: linear-gradient(120deg, rgba(255,255,255,0.14) 0%, transparent 32%); }
+
+/* thin pedestal */
+.is-kiosk .kiosk-neck {
+  width: 30px; height: 26px;
+  background: linear-gradient(90deg, #0a0c42, #262d85 50%, #0a0c42);
+  border: 0;
+}
+.is-kiosk .kiosk-base {
+  width: calc(var(--kw) * 0.7);
+  height: 8px;
+  border-radius: 100px;
+  background: linear-gradient(180deg, #2c338f, #0a0c42);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 24px rgba(2, 2, 36, 0.55);
+}
+
+/* caption becomes a small floating label under the device */
+.is-kiosk .pp-cap {
+  align-self: center;
+  flex-direction: row; align-items: center; gap: 10px;
+  margin: 16px auto 0;
+  padding: 8px 16px;
+  width: max-content;
+  border-radius: 100px;
+  background: rgba(10, 12, 78, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.is-kiosk .pp-cap b { font-size: 0.9rem; }
+.is-kiosk .pp-meta { font-size: 0.62rem; }
+.project-preview.is-kiosk { display: flex; flex-direction: column; align-items: center; }
+.is-kiosk .pp-cap { margin-top: 24px; }
+.is-kiosk .kiosk-neck { width: 26px; height: 22px; }
