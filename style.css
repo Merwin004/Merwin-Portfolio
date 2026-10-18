@@ -1660,3 +1660,7 @@ img, svg, canvas, video { max-width: 100%; }
   }
   body.menu-open { overflow: hidden; }
 }
+
+/* no elastic over-scroll bounce at the top/bottom of the page (it exposed the fixed background below the footer) */
+html, body { overscroll-behavior: none; }
+html { background: #07073a; }
